@@ -21,12 +21,12 @@ const STEPS = [
   { n: 5, label: "Review" },
 ];
 
-const VALUATION_MULTIPLIERS: Record<Platform, number> = {
-  TikTok: 20, Instagram: 28, YouTube: 36, X: 22, Telegram: 30,
+const VALUATION_MULTIPLIERS: Record<string, number> = {
+  TikTok: 20, Instagram: 28, YouTube: 36, X: 22, Telegram: 30, Discord: 18, Facebook: 20, Twitch: 24,
 };
 
 interface FormState {
-  platform: Platform | "";
+  platform: string;
   username: string;
   niche: string;
   followers: string;
@@ -132,7 +132,7 @@ export default function SellPage() {
                           <div className="text-left">
                             <div className="text-white font-bold">{p}</div>
                             <div className="text-white/60 text-xs">
-                              {{TikTok: "Shop eligible", Instagram: "Brand deals", YouTube: "AdSense", X: "Subscriptions", Telegram: "Channels"}[p]}
+                              {({TikTok: "Shop eligible", Instagram: "Brand deals", YouTube: "AdSense", X: "Subscriptions", Telegram: "Channels", Discord: "Community", Facebook: "Pages/Groups", Twitch: "Live streaming"} as Record<string,string>)[p]}
                             </div>
                           </div>
                           <div className="ml-auto">
