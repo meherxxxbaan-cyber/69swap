@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, );
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const Stripe = (await import("stripe")).default;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
     const body = await req.json();
     const { listingId, listingTitle, price, sellerId, buyerId } = body;
 
@@ -24,8 +26,8 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: listingTitle || `Social Media Account`,
-              description: "Escrow-protected via 69Swap · 7-day inspection period · Full refund if not as described",
+              name: listingTitle || "Social Media Account",
+              description: "Escrow-protected via 69Swap · 7-day inspection period",
             },
             unit_amount: totalInCents,
           },
@@ -45,8 +47,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
   } catch (err: unknown) {
-    console.error("Stripe checkout error:", err);
-    const message = err instanceof Error ? err.message : "Failed to create checkout session";
+    const message = err instanceof Error ? err.message : "Failed to create checkout";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
