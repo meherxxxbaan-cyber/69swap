@@ -1,16 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatNumber, formatPrice } from "@/lib/utils";
 import type { Listing } from "@/lib/seed-data";
 import { OfferModal } from "@/components/offer-modal";
+import { PlatformIcon } from "@/components/platform-icons";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import {
-  CheckCircle, TrendingUp, Users, DollarSign,
-  ShoppingBag, Zap, Star, GitCompare, Heart,
-} from "lucide-react";
+import { CheckCircle, TrendingUp, Users, DollarSign, ShoppingBag, Zap, Star, GitCompare, Heart, ImageIcon } from "lucide-react";
 
 interface ListingCardProps {
   listing: Listing;
@@ -27,50 +23,39 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
 
   return (
     <>
-      <div
-        className={`bg-white rounded-xl border shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.11)] transition-all duration-200 hover:-translate-y-0.5 overflow-hidden flex flex-col group ${
-          compareSelected ? "border-indigo-400 ring-2 ring-indigo-100" : "border-slate-200"
-        }`}
-      >
-        {/* Platform gradient header */}
-        <div
-          className="h-[76px] relative flex items-end px-4 pb-3 overflow-hidden flex-shrink-0"
-          style={{ background: listing.gradient }}
-        >
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-2xl flex-shrink-0">{listing.emoji}</span>
-            <div className="min-w-0">
-              <div className="text-white font-bold text-sm leading-tight truncate">{listing.username}</div>
-              <div className="text-white/70 text-xs">{listing.platform}</div>
-            </div>
+      <div className={`bg-white rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:-translate-y-1 hover:shadow-xl border ${compareSelected ? "border-indigo-400 ring-2 ring-indigo-100 shadow-lg" : "border-slate-200 shadow-sm"}`}>
+
+        {/* Platform header - clean gradient with real icon */}
+        <div className="relative h-[88px] flex items-center px-4 gap-3" style={{ background: listing.gradient }}>
+          {/* Overlay for readability */}
+          <div className="absolute inset-0 bg-black/20" />
+
+          {/* Platform icon circle */}
+          <div className="relative z-10 w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 flex-shrink-0">
+            <PlatformIcon platform={listing.platform} size={22} />
           </div>
 
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {listing.featured && (
-              <div className="bg-amber-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">⭐ TOP</div>
-            )}
+          {/* Username + platform */}
+          <div className="relative z-10 flex-1 min-w-0">
+            <div className="text-white font-bold text-base leading-tight truncate">{listing.username}</div>
+            <div className="text-white/70 text-xs mt-0.5">{listing.platform} · {listing.niche}</div>
+          </div>
 
-            {/* Watchlist heart */}
+          {/* Action buttons */}
+          <div className="relative z-10 flex items-center gap-1.5 flex-shrink-0">
+            {listing.featured && (
+              <span className="bg-amber-400 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">Featured</span>
+            )}
             <button
               onClick={(e) => { e.preventDefault(); toggle(listing.id); }}
-              className={`p-1.5 rounded-lg transition-all duration-150 ${
-                saved
-                  ? "bg-red-500 text-white"
-                  : "bg-white/20 text-white hover:bg-white/30"
-              }`}
-              aria-label={saved ? "Remove from watchlist" : "Save to watchlist"}
+              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${saved ? "bg-red-500 text-white" : "bg-white/20 text-white hover:bg-white/30"}`}
             >
               <Heart className={`h-3.5 w-3.5 ${saved ? "fill-current" : ""}`} />
             </button>
-
-            {/* Compare toggle */}
             {showCompare && (
               <button
                 onClick={(e) => { e.preventDefault(); onCompareToggle?.(listing); }}
-                className={`p-1.5 rounded-lg transition-all duration-150 ${
-                  compareSelected ? "bg-indigo-500 text-white" : "bg-white/20 text-white hover:bg-white/30"
-                }`}
-                aria-label="Compare"
+                className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${compareSelected ? "bg-indigo-500 text-white" : "bg-white/20 text-white hover:bg-white/30"}`}
               >
                 <GitCompare className="h-3.5 w-3.5" />
               </button>
@@ -78,80 +63,95 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4 flex-1 flex flex-col gap-3">
-          {/* Niche + location */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">{listing.niche_emoji}</span>
-            <Badge variant="default" className="text-xs">{listing.niche}</Badge>
-            <span className="text-[11px] text-slate-400 ml-auto truncate max-w-[90px]">{listing.location}</span>
-          </div>
+        {/* Image preview strip - shows if listing has images */}
+        <div className="flex gap-1 px-4 pt-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-1 h-14 bg-slate-100 rounded-lg flex items-center justify-center border border-slate-200 overflow-hidden">
+              <ImageIcon className="h-4 w-4 text-slate-300" />
+            </div>
+          ))}
+        </div>
 
-          {/* Metric boxes */}
-          <div className="grid grid-cols-3 gap-1.5">
-            {[
-              { icon: <Users className="h-3 w-3 text-slate-400 mx-auto mb-0.5" />,         val: formatNumber(listing.followers),         label: "Followers", green: false },
-              { icon: <DollarSign className="h-3 w-3 text-emerald-400 mx-auto mb-0.5" />,  val: formatPrice(listing.monthly_income),      label: "Mo. Income", green: true  },
-              { icon: <TrendingUp className="h-3 w-3 text-blue-400 mx-auto mb-0.5" />,     val: `${listing.engagement_rate}%`,            label: "Engage",     green: false },
-            ].map((m) => (
-              <div key={m.label} className="bg-slate-50 rounded-lg p-2 text-center">
-                {m.icon}
-                <div className={`text-sm font-bold leading-tight ${m.green ? "text-emerald-600" : "text-slate-900"}`}>{m.val}</div>
-                <div className="text-[10px] text-slate-400">{m.label}</div>
-              </div>
-            ))}
+        {/* Stats */}
+        <div className="px-4 pt-3 pb-0 grid grid-cols-3 gap-2">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+              <Users className="h-3 w-3" />
+            </div>
+            <div className="text-sm font-bold text-slate-900">{formatNumber(listing.followers)}</div>
+            <div className="text-[10px] text-slate-400">Followers</div>
           </div>
-
-          {/* Feature badges */}
-          <div className="flex flex-wrap gap-1">
-            {listing.verified_income && (
-              <Badge variant="success" className="text-[10px] gap-1 px-1.5 py-0.5">
-                <CheckCircle className="h-2.5 w-2.5" /> Verified
-              </Badge>
-            )}
-            {listing.monetized && (
-              <Badge variant="indigo" className="text-[10px] gap-1 px-1.5 py-0.5">
-                <Zap className="h-2.5 w-2.5" /> Monetized
-              </Badge>
-            )}
-            {listing.tiktok_shop_eligible && (
-              <Badge variant="warning" className="text-[10px] gap-1 px-1.5 py-0.5">
-                <ShoppingBag className="h-2.5 w-2.5" /> Shop
-              </Badge>
-            )}
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+              <DollarSign className="h-3 w-3" />
+            </div>
+            <div className="text-sm font-bold text-emerald-600">{formatPrice(listing.monthly_income)}</div>
+            <div className="text-[10px] text-slate-400">Mo. Income</div>
           </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+              <TrendingUp className="h-3 w-3" />
+            </div>
+            <div className="text-sm font-bold text-slate-900">{listing.engagement_rate}%</div>
+            <div className="text-[10px] text-slate-400">Engagement</div>
+          </div>
+        </div>
 
-          {/* Seller rating */}
-          <div className="flex items-center gap-1 text-xs text-slate-400">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            <span className="font-medium text-slate-600">{listing.seller_rating}</span>
-            <span>·</span>
-            <span>{listing.seller_sales} sales</span>
-            <Link href={`/profile/${listing.seller_id}`} className="ml-auto text-indigo-500 hover:text-indigo-700 hover:underline text-[10px] truncate max-w-[70px]">
-              {listing.seller_name}
+        {/* Badges */}
+        <div className="px-4 pt-2.5 flex flex-wrap gap-1">
+          {listing.verified_income && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <CheckCircle className="h-2.5 w-2.5" /> Verified Income
+            </span>
+          )}
+          {listing.monetized && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full">
+              <Zap className="h-2.5 w-2.5" /> Monetized
+            </span>
+          )}
+          {listing.tiktok_shop_eligible && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
+              <ShoppingBag className="h-2.5 w-2.5" /> Shop
+            </span>
+          )}
+        </div>
+
+        {/* Seller + location */}
+        <div className="px-4 pt-2 flex items-center gap-1.5 text-xs text-slate-400">
+          <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+          <span className="font-medium text-slate-600">{listing.seller_rating}</span>
+          <span>·</span>
+          <span>{listing.seller_sales} sales</span>
+          <span>·</span>
+          <span className="truncate">{listing.location}</span>
+        </div>
+
+        {/* Price + CTA */}
+        <div className="p-4 mt-auto">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <div className="text-2xl font-extrabold text-slate-900">{formatPrice(listing.price)}</div>
+              <div className="text-[11px] text-slate-400">Min offer: {formatPrice(listing.minimum_offer)}</div>
+            </div>
+            <Link href={`/listing/${listing.id}`} className="text-xs text-indigo-600 hover:underline font-medium">
+              View Details →
             </Link>
           </div>
 
-          {/* Price + CTAs */}
-          <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-            <div>
-              <div className="text-xl font-extrabold text-emerald-600">{formatPrice(listing.price)}</div>
-              <div className="text-[10px] text-slate-400">Min: {formatPrice(listing.minimum_offer)}</div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Button size="sm" variant="success" asChild className="text-xs px-3">
-                <Link href={`/listing/${listing.id}`}>Buy Now</Link>
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="text-xs px-3"
-                onClick={() => setOfferOpen(true)}
-                disabled={offerSent}
-              >
-                {offerSent ? "✓ Offered" : "Make Offer"}
-              </Button>
-            </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Link
+              href={`/listing/${listing.id}`}
+              className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-2.5 rounded-xl transition-colors"
+            >
+              Buy Now
+            </Link>
+            <button
+              onClick={() => setOfferOpen(true)}
+              disabled={offerSent}
+              className="flex items-center justify-center border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2.5 rounded-xl transition-colors disabled:opacity-60"
+            >
+              {offerSent ? "✓ Offered" : "Make Offer"}
+            </button>
           </div>
         </div>
       </div>
