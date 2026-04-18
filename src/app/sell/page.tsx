@@ -157,13 +157,13 @@ export default function SellPage() {
               {step === 2 && (
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                      style={{ background: form.platform ? PLATFORM_GRADIENTS[form.platform as Platform] : "#6366f1" }}>
-                      form.platform ? <PlatformIcon platform={form.platform} size={20} /> : null
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: form.platform ? PLATFORM_GRADIENTS[form.platform] : "#6366f1" }}>
+                      {form.platform ? <PlatformIcon platform={form.platform} size={20} /> : null}
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900">Account Details</h2>
-                      <p className="text-slate-500 text-sm">{form.platform} account</p>
+                      <p className="text-slate-500 text-sm">{form.platform || "Select platform"} account</p>
                     </div>
                   </div>
                   <div className="space-y-5">
@@ -361,7 +361,7 @@ export default function SellPage() {
 
                   {form.platform && (
                     <div className="rounded-xl overflow-hidden border border-slate-200 mb-5">
-                      <div className="h-14 flex items-center px-4 gap-3" style={{ background: PLATFORM_GRADIENTS[form.platform as Platform] }}>
+                      <div className="h-14 flex items-center px-4 gap-3" style={{ background: PLATFORM_GRADIENTS[form.platform] }}>
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: PLATFORM_GRADIENTS[form.platform] }}>
                         <PlatformIcon platform={form.platform} size={22} />
                       </div>
