@@ -33,7 +33,7 @@ export default async function ListingPage({ params }: Props) {
   if (!listing) notFound();
 
   const similar = SEED_LISTINGS.filter((l) => l.id !== id && l.platform === listing.platform).slice(0, 4);
-  const platformFee = Math.round(listing.price * 0.03);
+  const platformFee = Math.round(listing.price * 0.05);
   const totalCost = listing.price + platformFee;
 
   return (
@@ -197,7 +197,7 @@ export default async function ListingPage({ params }: Props) {
                     <span>Account price</span><span>{formatPrice(listing.price)}</span>
                   </div>
                   <div className="flex justify-between text-slate-400 text-xs">
-                    <span>Platform fee (3%)</span><span>{formatPrice(platformFee)}</span>
+                    <span>Platform fee (5%)</span><span>{formatPrice(platformFee)}</span>
                   </div>
                   <div className="flex justify-between font-bold text-slate-900 pt-1.5 border-t border-slate-100">
                     <span>Total</span><span className="text-emerald-600">{formatPrice(totalCost)}</span>

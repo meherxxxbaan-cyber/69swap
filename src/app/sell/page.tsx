@@ -22,10 +22,63 @@ const STEPS = [
   { n: 5, label: "Review" },
 ];
 
-const VALUATION_MULTIPLIERS: Record<string, number> = {
-  TikTok: 20, Instagram: 28, YouTube: 36, X: 22, Telegram: 30, Discord: 18, Facebook: 20, Twitch: 24,
-  Pinterest: 24, WeChat: 22, LinkedIn: 32, Snapchat: 18, Threads: 16,
+// Realistic valuation: follower-based with audience quality multiplier
+// Base: $10 per 1K followers for Western/US, $4-6 for Asian/Latin American
+// Cap at realistic market prices ($250-7000 range)
+const PLATFORM_BASE_CPF: Record<string, number> = {
+  // $ per 1K followers (Western audience baseline)
+  TikTok: 8, Instagram: 14, YouTube: 18, X: 6, Telegram: 20,
+  Discord: 5, Facebook: 5, Twitch: 10, Pinterest: 8,
+  WeChat: 12, LinkedIn: 22, Snapchat: 6, Threads: 4,
 };
+
+const LOCATION_MULTIPLIER: Record<string, number> = {
+  // Western/high-income markets
+  "United States": 1.0, "United Kingdom": 0.95, "Canada": 0.9,
+  "Australia": 0.9, "Germany": 0.85, "France": 0.85, "Italy": 0.8,
+  "Netherlands": 0.85, "Switzerland": 0.9, "UAE": 0.85, "Saudi Arabia": 0.8,
+  // Asian markets
+  "Japan": 0.7, "South Korea": 0.65, "Singapore": 0.75, "Hong Kong": 0.7,
+  "China": 0.5, "India": 0.35, "Indonesia": 0.3, "Philippines": 0.3,
+  // Latin American markets
+  "Brazil": 0.35, "Mexico": 0.35, "Colombia": 0.3, "Argentina": 0.3,
+  // African markets
+  "Nigeria": 0.25, "Ghana": 0.25, "South Africa": 0.4, "Senegal": 0.2,
+  // Eastern European
+  "Russia": 0.3, "Ukraine": 0.3, "Poland": 0.45,
+};
+
+function estimateValue(platform: string, followers: number, monthlyIncome: number, location: string): number {
+  const baseCPF = PLATFORM_BASE_CPF[platform] || 8;
+  const locMult = LOCATION_MULTIPLIER[location] || 0.5;
+  const followersK = followers / 1000;
+  
+  // Follower-based value (diminishing returns above 100K)
+  let followerValue = 0;
+  if (followersK <= 100) {
+    followerValue = followersK * baseCPF * locMult;
+  } else {
+    // First 100K at full rate, rest at 40% rate (diminishing returns)
+    followerValue = (100 * baseCPF * locMult) + ((followersK - 100) * baseCPF * locMult * 0.4);
+  }
+  
+  // Income multiple (12-24x monthly income depending on platform)
+  const incomeMultipliers: Record<string, number> = {
+    YouTube: 22, LinkedIn: 28, Telegram: 18, TikTok: 16,
+    Instagram: 20, X: 14, Discord: 12, Facebook: 12,
+    Pinterest: 18, WeChat: 16, Twitch: 14, Snapchat: 10, Threads: 10,
+  };
+  const incMult = incomeMultipliers[platform] || 15;
+  const incomeValue = monthlyIncome * incMult * locMult;
+  
+  // Take higher of follower-based or income-based, blended
+  const blended = monthlyIncome > 0
+    ? (followerValue * 0.4) + (incomeValue * 0.6)
+    : followerValue;
+  
+  // Clamp to realistic market range $250 - $8000
+  return Math.max(250, Math.min(8000, Math.round(blended / 50) * 50));
+}
 
 interface FormState {
   platform: string;
@@ -59,8 +112,11 @@ export default function SellPage() {
     setForm((p) => ({ ...p, [k]: v }));
 
   const income = Number(form.monthly_income) || 0;
-  const multiplier = form.platform ? VALUATION_MULTIPLIERS[form.platform as Platform] : 24;
-  const aiEstimate = income > 0 ? Math.floor(income * multiplier) : null;
+  const followers = Number(form.followers) || 0;
+  const aiEstimate = (followers > 0 || income > 0) && form.platform
+    ? estimateValue(form.platform, followers, income, form.location || "United States")
+    : null;
+  const multiplier = 0; // unused but kept for type safety
   const canStep1 = !!form.platform;
   const canStep2 = form.username && form.niche && form.followers && form.monthly_income;
   const canStep4 = !!form.price;
@@ -80,7 +136,7 @@ export default function SellPage() {
                 <Tag className="h-4 w-4" /> Always free to list
               </div>
               <h1 className="text-3xl font-extrabold text-slate-900">List Your Account</h1>
-              <p className="text-slate-500 mt-2">Reach 50,000+ verified buyers · 3% fee only on sale</p>
+              <p className="text-slate-500 mt-2">Reach 50,000+ verified buyers · 5% fee only on sale</p>
             </div>
 
             {/* Stepper */}
@@ -296,7 +352,7 @@ export default function SellPage() {
                       </div>
                       <div className="text-3xl font-extrabold text-indigo-900">{formatPrice(aiEstimate)}</div>
                       <div className="flex gap-4 mt-3 text-xs text-indigo-600">
-                        <div className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />Based on {multiplier}× monthly income</div>
+                        <div className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />Based on followers, income & audience location</div>
                         <div className="flex items-center gap-1"><Users className="h-3 w-3" />Market data from 5,000+ sales</div>
                       </div>
                       <div className="mt-3 flex gap-2">

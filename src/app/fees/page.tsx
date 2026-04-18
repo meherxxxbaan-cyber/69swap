@@ -6,8 +6,8 @@ import { CheckCircle, X, ArrowRight, DollarSign, ShieldCheck } from "lucide-reac
 
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Fees & Pricing — 3% Platform Fee, Free to List | SocialQX",
-  description: "SocialQX charges just 3% on completed sales. Listing is always free.",
+  title: "Fees & Pricing — 5% Platform Fee, Free to List | SocialQX",
+  description: "SocialQX charges just 5% on completed sales. Listing is always free.",
   alternates: { canonical: "https://socialqx.com/fees" },
 };
 
@@ -36,7 +36,7 @@ export default function FeesPage() {
               highlight: false,
             },
             {
-              icon: "💳", title: "Platform Fee", price: "3%", desc: "Charged to the buyer on top of the listing price. Covers escrow, Stripe processing, and support.",
+              icon: "💳", title: "Platform Fee", price: "5%", desc: "Charged to the buyer on top of the listing price. Covers escrow, Stripe processing, and support.",
               highlight: true,
             },
             {
@@ -62,12 +62,12 @@ export default function FeesPage() {
           <div className="max-w-sm space-y-3 text-sm">
             {[
               { label: "Account listing price", value: "$100", bold: false, green: false },
-              { label: "Platform fee (3%)",     value: "+$3",    bold: false, green: false },
-              { label: "Buyer pays total",       value: "$103",  bold: true,  green: false, border: true },
+              { label: "Platform fee (5%)",     value: "+$5",    bold: false, green: false },
+              { label: "Buyer pays total",       value: "$105",  bold: true,  green: false, border: true },
               { label: "",                       value: "",         bold: false, green: false },
-              { label: "Platform fee (3%)",      value: "-$3",    bold: false, green: false },
+              { label: "Platform fee (5%)",      value: "-$5",    bold: false, green: false },
               { label: "Stripe processing (~2%)", value: "-$2",   bold: false, green: false },
-              { label: "Seller receives",         value: "$95+", bold: true,  green: true,  border: true },
+              { label: "Seller receives",         value: "$93+", bold: true,  green: true,  border: true },
             ].filter(r => r.label).map((row) => (
               <div key={row.label} className={`flex justify-between py-2 ${row.border ? "border-t border-slate-200 mt-1 pt-3" : ""}`}>
                 <span className={row.bold ? "font-semibold text-slate-900" : "text-slate-500"}>{row.label}</span>
@@ -96,7 +96,7 @@ export default function FeesPage() {
               <tbody>
                 {[
                   { feature: "Listing fee",          us: "Free",   a: "$19/mo", b: "Free" },
-                  { feature: "Platform fee",          us: "3%",     a: "15%",   b: "5-10%" },
+                  { feature: "Platform fee",          us: "5%",     a: "15%",   b: "5-10%" },
                   { feature: "Escrow protection",     us: true,     a: false,   b: false },
                   { feature: "Stripe Connect payouts",us: true,     a: false,   b: false },
                   { feature: "Inspection period",     us: "7 days", a: "None",  b: "3 days" },
@@ -128,7 +128,7 @@ export default function FeesPage() {
         <div className="bg-indigo-600 rounded-2xl p-8 text-center">
           <ShieldCheck className="h-10 w-10 text-indigo-200 mx-auto mb-3" />
           <h2 className="text-2xl font-extrabold text-white mb-2">List your account for free today</h2>
-          <p className="text-indigo-200 mb-6 text-sm">3% fee only applies when your account sells. Zero risk, zero upfront cost.</p>
+          <p className="text-indigo-200 mb-6 text-sm">5% fee only applies when your account sells. Zero risk, zero upfront cost.</p>
           <Button size="lg" className="bg-white text-indigo-700 hover:bg-indigo-50 gap-2" asChild>
             <Link href="/sell">Start Selling <ArrowRight className="h-4 w-4" /></Link>
           </Button>

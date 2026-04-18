@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const priceInCents = Math.round(Number(price) * 100);
-    const platformFeeInCents = Math.round(priceInCents * 0.03);
+    const platformFeeInCents = Math.round(priceInCents * 0.05);
     const totalInCents = priceInCents + platformFeeInCents;
 
     const session = await stripe.checkout.sessions.create({
