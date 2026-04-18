@@ -102,7 +102,7 @@ export default function RegisterPage() {
               <ShieldCheck className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-extrabold text-slate-900">
-              69<span className="text-indigo-600">Swap</span>
+              Social<span className="text-indigo-600">QX</span>
             </span>
           </Link>
           <h1 className="text-xl font-bold text-slate-900 mt-4">Create your account</h1>

@@ -30,7 +30,9 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || '/dashboard';
+      router.push(redirect);
       router.refresh();
     }
   }
@@ -52,7 +54,7 @@ export default function LoginPage() {
               <ShieldCheck className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-extrabold text-slate-900">
-              69<span className="text-indigo-600">Swap</span>
+              Social<span className="text-indigo-600">QX</span>
             </span>
           </Link>
           <h1 className="text-xl font-bold text-slate-900 mt-4">Welcome back</h1>
