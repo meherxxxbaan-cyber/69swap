@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { PLATFORMS, PLATFORM_GRADIENTS, PLATFORM_EMOJIS, NICHES, formatPrice } from "@/lib/utils";
+import { PlatformIcon } from "@/components/platform-icons";
 import type { Platform } from "@/lib/utils";
 import {
   CheckCircle, Upload, DollarSign, ArrowRight, ArrowLeft,
@@ -128,7 +129,9 @@ export default function SellPage() {
                         }`}
                       >
                         <div className="h-16 flex items-center px-4 gap-3" style={{ background: PLATFORM_GRADIENTS[p] }}>
-                          <span className="text-2xl">{PLATFORM_EMOJIS[p]}</span>
+                          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 flex-shrink-0">
+                          <PlatformIcon platform={p} size={22} />
+                        </div>
                           <div className="text-left">
                             <div className="text-white font-bold">{p}</div>
                             <div className="text-white/60 text-xs">
@@ -155,7 +158,7 @@ export default function SellPage() {
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
                       style={{ background: form.platform ? PLATFORM_GRADIENTS[form.platform as Platform] : "#6366f1" }}>
-                      {form.platform ? PLATFORM_EMOJIS[form.platform as Platform] : ""}
+                      form.platform ? <PlatformIcon platform={form.platform} size={20} /> : null
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900">Account Details</h2>
@@ -358,7 +361,9 @@ export default function SellPage() {
                   {form.platform && (
                     <div className="rounded-xl overflow-hidden border border-slate-200 mb-5">
                       <div className="h-14 flex items-center px-4 gap-3" style={{ background: PLATFORM_GRADIENTS[form.platform as Platform] }}>
-                        <span className="text-2xl">{PLATFORM_EMOJIS[form.platform as Platform]}</span>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: PLATFORM_GRADIENTS[form.platform] }}>
+                        <PlatformIcon platform={form.platform} size={22} />
+                      </div>
                         <div>
                           <div className="text-white font-bold">{form.username || "No username"}</div>
                           <div className="text-white/70 text-xs">{form.platform} · {form.niche}</div>

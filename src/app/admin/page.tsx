@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PlatformIcon } from "@/components/platform-icons";
 import { SEED_LISTINGS } from "@/lib/seed-data";
 import { formatPrice, formatNumber, PLATFORM_GRADIENTS, PLATFORM_EMOJIS } from "@/lib/utils";
 import type { Platform } from "@/lib/utils";
@@ -220,7 +221,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
                               style={{ background: PLATFORM_GRADIENTS[p.platform] }}>
-                              {PLATFORM_EMOJIS[p.platform]}
+                              <PlatformIcon platform={p.platform} size={14} />
                             </div>
                             <span className="text-sm text-white font-medium">{p.platform}</span>
                           </div>
