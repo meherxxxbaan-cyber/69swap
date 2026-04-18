@@ -7,7 +7,10 @@ import type { Listing } from "@/lib/seed-data";
 import { OfferModal } from "@/components/offer-modal";
 import { PlatformIcon } from "@/components/platform-icons";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import { CheckCircle, TrendingUp, Users, DollarSign, ShoppingBag, Zap, Star, GitCompare, Heart, BarChart2 } from "lucide-react";
+import {
+  CheckCircle, TrendingUp, Users, DollarSign, ShoppingBag,
+  Zap, Star, GitCompare, Heart, BarChart2, Clock, ShieldCheck,
+} from "lucide-react";
 
 interface Props {
   listing: Listing;
@@ -22,17 +25,24 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
   const { toggle, has, hydrated } = useWatchlist();
   const router = useRouter();
   const saved = hydrated && has(listing.id);
+  const isPending = listing.isSeed || listing.listingStatus === "pending_verification";
   const multipleOfIncome = listing.monthly_income > 0
     ? (listing.price / listing.monthly_income).toFixed(1) + "×"
     : null;
 
-  const goToListing = () => router.push(`/listing/${listing.id}`);
+  const handleCardClick = () => {
+    if (!isPending) router.push(`/listing/${listing.id}`);
+  };
 
   return (
     <>
       <div
-        onClick={goToListing}
-        className={`group bg-white rounded-2xl overflow-hidden flex flex-col transition-all duration-200 cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 ${
+        onClick={handleCardClick}
+        className={`group bg-white rounded-2xl overflow-hidden flex flex-col transition-all duration-200 ${
+          isPending
+            ? "cursor-default opacity-80"
+            : "cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:-translate-y-0.5"
+        } ${
           compareSelected
             ? "ring-2 ring-indigo-500 shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
             : "shadow-[0_1px_4px_rgba(0,0,0,0.08)] border border-slate-200"
@@ -42,6 +52,13 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
         <div className="relative h-20 flex items-center px-4 gap-3 overflow-hidden flex-shrink-0"
           style={{ background: listing.gradient }}>
           <div className="absolute inset-0 bg-black/20" />
+
+          {/* Pending badge overlay */}
+          {isPending && (
+            <div className="absolute top-2 right-2 z-20 flex items-center gap-1 bg-amber-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <Clock className="h-2.5 w-2.5" /> Under Review
+            </div>
+          )}
 
           <div className="relative z-10 w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/25 flex-shrink-0">
             <PlatformIcon platform={listing.platform} size={20} />
@@ -56,10 +73,9 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
             </div>
           </div>
 
-          {/* Action buttons - stop propagation so card click doesn't fire */}
           <div className="relative z-10 flex items-center gap-1 flex-shrink-0">
-            <span className="text-base" title={listing.seller_country}>{listing.seller_flag}</span>
-            {listing.featured && (
+            <span className="text-base">{listing.seller_flag}</span>
+            {listing.featured && !isPending && (
               <span className="bg-amber-400 text-amber-900 text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-0.5">TOP</span>
             )}
             <button
@@ -70,7 +86,7 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
             >
               <Heart className={`h-3.5 w-3.5 ${saved ? "fill-current" : ""}`} />
             </button>
-            {showCompare && (
+            {showCompare && !isPending && (
               <button
                 onClick={(e) => { e.stopPropagation(); onCompareToggle?.(listing); }}
                 className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
@@ -84,7 +100,7 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
         </div>
 
         {/* Stats */}
-        <div className="p-4 flex-1 flex flex-col gap-3">
+        <div className={`p-4 flex-1 flex flex-col gap-3 ${isPending ? "filter blur-[0.5px]" : ""}`}>
           <div className="grid grid-cols-3 gap-2">
             {[
               { icon: <Users className="h-3 w-3" />,     val: formatNumber(listing.followers),     label: "Followers",  green: false },
@@ -151,29 +167,37 @@ export function ListingCard({ listing, compareSelected, onCompareToggle, showCom
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {/* Buy Now — navigates to listing */}
-            <Link
-              href={`/listing/${listing.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold py-2.5 rounded-xl transition-colors"
-            >
-              Buy Now
-            </Link>
-
-            {/* Make Offer — opens modal */}
-            <button
-              onClick={(e) => { e.stopPropagation(); setOfferOpen(true); }}
-              disabled={offerSent}
-              className="flex items-center justify-center border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-700 text-slate-700 text-[13px] font-semibold py-2.5 rounded-xl transition-all disabled:opacity-60"
-            >
-              {offerSent ? "✓ Sent" : "Make Offer"}
-            </button>
-          </div>
+          {/* Pending state — no buy buttons */}
+          {isPending ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-3 flex items-start gap-2">
+              <ShieldCheck className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-[12px] font-semibold text-amber-800">Verification in progress</p>
+                <p className="text-[11px] text-amber-600 mt-0.5">Our team is reviewing this listing. Check back soon.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href={`/listing/${listing.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold py-2.5 rounded-xl transition-colors"
+              >
+                Buy Now
+              </Link>
+              <button
+                onClick={(e) => { e.stopPropagation(); setOfferOpen(true); }}
+                disabled={offerSent}
+                className="flex items-center justify-center border-2 border-slate-200 hover:border-indigo-300 hover:text-indigo-700 text-slate-700 text-[13px] font-semibold py-2.5 rounded-xl transition-all disabled:opacity-60"
+              >
+                {offerSent ? "✓ Sent" : "Make Offer"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {offerOpen && (
+      {offerOpen && !isPending && (
         <OfferModal
           listing={listing}
           onClose={() => setOfferOpen(false)}

@@ -24,6 +24,8 @@ export interface Listing {
   seller_sales: number;
   created_at: string;
   featured: boolean;
+  isSeed: boolean;
+  listingStatus: "active" | "pending_verification" | "sold";
   gradient: string;
   emoji: string;
   niche_emoji: string;
@@ -660,10 +662,24 @@ const RAW: Omit<Listing, "gradient"|"emoji"|"niche_emoji">[] = [
 
 export const SEED_LISTINGS: Listing[] = RAW.map((l) => ({
   ...l,
+  isSeed: true,
+  listingStatus: "pending_verification" as const,
   gradient:    PLATFORM_GRADIENTS[l.platform] || "#6366f1",
   emoji:       PLATFORM_EMOJIS[l.platform]    || "📱",
   niche_emoji: NICHE_EMOJIS[l.niche]          || "✨",
-}));
+})).sort((a, b) => {
+  // 1. Real listings (non-seed, from DB) always first
+  if (!a.isSeed && b.isSeed) return -1;
+  if (a.isSeed && !b.isSeed) return 1;
+  // 2. Among real listings: newest first (by created_at)
+  if (!a.isSeed && !b.isSeed) {
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  }
+  // 3. Among seed listings: featured first, then by price desc
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+  return b.price - a.price;
+});
 
 export const MARKETPLACE_STATS = {
   active_listings: 5214,
