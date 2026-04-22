@@ -65,9 +65,9 @@ export default function FeesPage() {
               { label: "Platform fee (5%)",     value: "+$5",    bold: false, green: false },
               { label: "Buyer pays total",       value: "$105",  bold: true,  green: false, border: true },
               { label: "",                       value: "",         bold: false, green: false },
-              { label: "Platform fee (5%)",      value: "-$5",    bold: false, green: false },
-              { label: "Stripe processing (~2%)", value: "-$2",   bold: false, green: false },
-              { label: "Seller receives",         value: "$93+", bold: true,  green: true,  border: true },
+              
+              { label: "Stripe processing (~2%)", value: "-$2", bold: false, green: false },
+              { label: "Seller receives", value: "$98+", bold: true, green: true, border: true },
             ].filter(r => r.label).map((row) => (
               <div key={row.label} className={`flex justify-between py-2 ${row.border ? "border-t border-slate-200 mt-1 pt-3" : ""}`}>
                 <span className={row.bold ? "font-semibold text-slate-900" : "text-slate-500"}>{row.label}</span>
