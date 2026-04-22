@@ -89,6 +89,7 @@ export default function MarketplacePage() {
     minPrice || maxPrice || minFollowers || verifiedOnly || monetizedOnly;
 
   const FilterPanel = () => (
+    // sidebar scroll handled by parent
     <div className="space-y-5">
       {/* Platform quick pills */}
       <div>
@@ -242,7 +243,7 @@ export default function MarketplacePage() {
         <div className="flex gap-6">
           {/* Desktop sidebar */}
           <aside className="hidden md:block w-[220px] flex-shrink-0">
-            <div className="sticky top-24 bg-white rounded-xl border border-slate-200 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+            <div className="sticky top-24 bg-white rounded-xl border border-slate-200 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] max-h-[calc(100vh-120px)] overflow-y-auto">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-slate-900 text-sm">Filters</h2>
                 {hasFilters && (
